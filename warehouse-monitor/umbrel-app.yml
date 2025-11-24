@@ -1,0 +1,60 @@
+manifestVersion: 1
+id: warehouse-monitor
+category: productivity
+name: Lager Monitor
+version: "1.0.0"
+tagline: Lagerverwaltung mit Bestand, Warenein-/ausgang und Umsatzübersicht
+description: >-
+  Lager Monitor ist eine einfache und effektive Lagerverwaltungslösung für kleine und mittlere Unternehmen.
+  
+  **Features:**
+  
+  📦 **Produktverwaltung** - Verwalten Sie Ihre Produkte mit Namen, SKU und Preis
+  
+  📥 **Wareneingang** - Buchen Sie neue Ware und aktualisieren Sie automatisch den Bestand
+  
+  📤 **Warenausgang** - Erfassen Sie Verkäufe und Entnahmen
+  
+  💰 **Umsatzübersicht** - Sehen Sie Ihre Verkaufsumsätze und Top-Produkte
+  
+  📊 **Bestandskontrolle** - Behalten Sie den Überblick über Ihren aktuellen Lagerbestand
+  
+  🔐 **Vollständig Verschlüsselt** - Alle Daten mit AES-Verschlüsselung lokal gespeichert
+  
+  
+  **Erste Schritte:**
+  
+  1. Öffnen Sie die App (PIN: 9045)
+  2. Legen Sie Lieferanten an
+  3. Erstellen Sie Ihre Produkte
+  4. Buchen Sie Wareneingänge und -ausgänge
+  5. Überwachen Sie Ihre Umsätze und Gewinne
+  
+  Alle Daten werden verschlüsselt lokal im Browser gespeichert - vollständige Privatsphäre auf Ihrem Umbrel-Server.
+
+developer: Umbrel Community
+website: https://github.com/getumbrel/umbrel-apps
+dependencies: []
+repo: https://github.com/getumbrel/umbrel-apps
+support: https://github.com/getumbrel/umbrel-apps/issues
+port: 5000
+gallery:
+  - 1.jpg
+  - 2.jpg
+  - 3.jpg
+path: ""
+defaultUsername: ""
+defaultPassword: ""
+torOnly: false
+permissions:
+  - network
+releaseNotes: >-
+  Version 2.0 - Vollständig Verschlüsselt:
+  - AES-Verschlüsselung für alle Daten
+  - Lokal im Browser gespeichert (kein Backend-Storage nötig)
+  - PIN-Sicherheit (9045)
+  - Lieferantenverwaltung mit Messenger-Kontakten
+  - Verbesserte Umsatz- und Gewinnberechnung
+  - Offline-fähig
+submitter: community
+submission: https://github.com/getumbrel/umbrel-apps

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lager Monitor</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .pin-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+
+    .pin-modal.active {
+      display: flex;
+    }
+
+    .pin-modal-content {
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      min-width: 300px;
+    }
+
+    .pin-modal-content h2 {
+      margin-top: 0;
+      color: #333;
+      font-size: 20px;
+    }
+
+    .pin-modal-content p {
+      color: #666;
+      margin: 15px 0;
+      font-size: 14px;
+    }
+
+    .pin-input-group {
+      margin: 25px 0;
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .pin-digit {
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      text-align: center;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+
+    .pin-digit:focus {
+      outline: none;
+      border-color: #2980b9;
+      box-shadow: 0 0 5px rgba(41, 128, 185, 0.3);
+    }
+
+    .pin-timer {
+      color: #e74c3c;
+      font-weight: bold;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .pin-button {
+      background: #2980b9;
+      color: white;
+      border: none;
+      padding: 10px 30px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .pin-button:hover {
+      background: #1f618d;
+    }
+
+    .pin-button:disabled {
+      background: #bdc3c7;
+      cursor: not-allowed;
+    }
+
+    header {
+      position: relative;
+    }
+
+    .logout-timer {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #3498db;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 5px;
+      font-size: 13px;
+      font-weight: bold;
+      min-width: 120px;
+      text-align: center;
+    }
+
+    .logout-timer.warning {
+      background: #e67e22;
+    }
+
+    .logout-timer.danger {
+      background: #e74c3c;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📦 Lager Monitor</h1>
+      <div class="logout-timer" id="logout-timer">Logout in: 15:00</div>
+      <nav>
+        <button class="nav-btn active" data-tab="products">Produkte</button>
+        <button class="nav-btn" data-tab="suppliers">Lieferanten</button>
+        <button class="nav-btn" data-tab="transactions">Transaktionen</button>
+        <button class="nav-btn" data-tab="revenue">Umsatz</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="products" class="tab-content active">
+        <div class="section-header">
+          <h2>Produktverwaltung</h2>
+          <button class="btn btn-primary" onclick="showAddProductModal()">+ Neues Produkt</button>
+        </div>
+        
+        <div class="table-container">
+          <table id="products-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>SKU</th>
+                <th>Preis (€)</th>
+                <th>Lieferant</th>
+                <th>Bestand</th>
+                <th>Aktionen</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="suppliers" class="tab-content">
+        <div class="section-header">
+          <h2>Lieferantenverwaltung</h2>
+          <button class="btn btn-primary" onclick="showAddSupplierModal()">+ Neuer Lieferant</button>
+        </div>
+        
+        <div class="table-container">
+          <table id="suppliers-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Threema</th>
+                <th>Telegram</th>
+                <th>Signal</th>
+                <th>Notizen</th>
+                <th>Aktionen</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="transactions" class="tab-content">
+        <div class="section-header">
+          <h2>Transaktionen</h2>
+          <button class="btn btn-primary" onclick="showTransactionModal()">+ Neue Transaktion</button>
+        </div>
+        
+        <div class="table-container">
+          <table id="transactions-table">
+            <thead>
+              <tr>
+                <th>Datum</th>
+                <th>Artikel</th>
+                <th>Typ</th>
+                <th>Menge</th>
+                <th>Gesamt</th>
+                <th>Notiz</th>
+                <th>Aktionen</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="revenue" class="tab-content">
+        <h2>Umsatzübersicht</h2>
+        
+        <div class="revenue-cards">
+          <div class="card">
+            <h3>Gesamtumsatz</h3>
+            <div class="revenue-value" id="total-revenue">€0.00</div>
+          </div>
+          <div class="card">
+            <h3>Verkaufte Artikel</h3>
+            <div class="revenue-value" id="total-items">0</div>
+          </div>
+          <div class="card">
+            <h3>Anzahl Verkäufe</h3>
+            <div class="revenue-value" id="total-sales">0</div>
+          </div>
+        </div>
+
+        <h3>Umsatz nach Produkt</h3>
+        <div class="table-container">
+          <table id="revenue-table">
+            <thead>
+              <tr>
+                <th>Produkt</th>
+                <th>SKU</th>
+                <th>Verkaufte Menge</th>
+                <th>Verkaufsumsatz (€)</th>
+                <th>Einkaufskosten (€)</th>
+                <th>Gewinn (€)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="supplier-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('supplier-modal')">&times;</span>
+      <h2 id="supplier-modal-title">Neuer Lieferant</h2>
+      <form id="supplier-form">
+        <input type="hidden" id="supplier-id">
+        <div class="form-group">
+          <label>Name *</label>
+          <input type="text" id="supplier-name" required>
+        </div>
+        <div class="form-group">
+          <label>Threema</label>
+          <input type="text" id="supplier-threema">
+        </div>
+        <div class="form-group">
+          <label>Telegram</label>
+          <input type="text" id="supplier-telegram">
+        </div>
+        <div class="form-group">
+          <label>Signal</label>
+          <input type="text" id="supplier-signal">
+        </div>
+        <div class="form-group">
+          <label>Notizen</label>
+          <textarea id="supplier-notes" rows="3"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn" onclick="closeModal('supplier-modal')">Abbrechen</button>
+          <button type="submit" class="btn btn-primary">Speichern</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="product-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('product-modal')">&times;</span>
+      <h2 id="product-modal-title">Neues Produkt</h2>
+      <form id="product-form">
+        <input type="hidden" id="product-id">
+        <div class="form-group">
+          <label>Produktname *</label>
+          <input type="text" id="product-name" required>
+        </div>
+        <div class="form-group">
+          <label>SKU *</label>
+          <input type="text" id="product-sku" required>
+        </div>
+        <div class="form-group">
+          <label>Preis (€)</label>
+          <input type="number" id="product-price" step="0.01" value="0">
+        </div>
+        <div class="form-group">
+          <label>Lieferant</label>
+          <select id="product-supplier"></select>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn" onclick="closeModal('product-modal')">Abbrechen</button>
+          <button type="submit" class="btn btn-primary">Speichern</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="transaction-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('transaction-modal')">&times;</span>
+      <h2 id="transaction-modal-title">Neue Transaktion</h2>
+      <form id="transaction-form">
+        <input type="hidden" id="transaction-id">
+        <div class="form-group">
+          <label>Transaktionstyp *</label>
+          <select id="transaction-type" required>
+            <option value="in">Wareneingang</option>
+            <option value="out">Warenausgang</option>
+          </select>
+        </div>
+
+        <h3>Artikel hinzufügen</h3>
+        <div class="form-group">
+          <p style="margin-bottom: 10px; font-size: 14px; color: #666;">Wählen Sie ein Produkt aus der Liste unten oder klicken Sie auf "➕ Hinzufügen" im Reiter Produkte.</p>
+        </div>
+
+        <h3>Warenkorb</h3>
+        <div class="table-container">
+          <table id="cart-items">
+            <thead>
+              <tr>
+                <th>Artikel</th>
+                <th>Menge</th>
+                <th>Preis (€)</th>
+                <th>Gesamt</th>
+                <th>Aktion</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+          <label>Notiz</label>
+          <textarea id="transaction-notes" rows="3"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn" onclick="closeModal('transaction-modal')">Abbrechen</button>
+          <button type="submit" class="btn btn-primary">Buchen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="pin-modal" class="pin-modal">
+    <div class="pin-modal-content">
+      <h2>🔐 Sicherheitsbestätigung</h2>
+      <p>Bitte geben Sie Ihren 4-stelligen PIN ein</p>
+      <div class="pin-input-group">
+        <input type="password" class="pin-digit" maxlength="1" id="pin-1" inputmode="numeric">
+        <input type="password" class="pin-digit" maxlength="1" id="pin-2" inputmode="numeric">
+        <input type="password" class="pin-digit" maxlength="1" id="pin-3" inputmode="numeric">
+        <input type="password" class="pin-digit" maxlength="1" id="pin-4" inputmode="numeric">
+      </div>
+      <div class="pin-timer" id="pin-timer"></div>
+      <button class="pin-button" onclick="validatePIN()">Bestätigen</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script src="storage.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

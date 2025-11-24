@@ -1,0 +1,77 @@
+═══════════════════════════════════════════════════════════════
+    🚀 LAGER MONITOR - UMBREL DEPLOYMENT QUICK START
+═══════════════════════════════════════════════════════════════
+
+SCHNELLSTART (5 Minuten):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Docker Image bauen:
+   $ cd warehouse-monitor
+   $ docker build -t warehouse-monitor:latest ./app
+
+2. App starten:
+   $ docker-compose up -d
+
+3. Öffnen Sie im Browser:
+   http://localhost:5000
+
+4. PIN eingeben: 9045
+
+✅ Fertig! App läuft.
+
+═══════════════════════════════════════════════════════════════
+
+FÜR UMBREL SERVER (auf Ihrem Umbrel-Gerät):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. SSH in Ihren Umbrel-Server:
+   $ ssh umbrel@192.168.1.100
+
+2. App-Verzeichnis:
+   $ cd ~/umbrel/apps
+
+3. App klonen oder kopieren:
+   $ git clone https://github.com/YOUR_REPO/warehouse-monitor.git
+
+4. Starten:
+   $ cd warehouse-monitor
+   $ docker-compose up -d
+
+5. Zugriff:
+   http://192.168.1.100:5000
+
+═══════════════════════════════════════════════════════════════
+
+WICHTIGE DATEIEN:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📄 umbrel-app.yml         - UmbrelOS App-Manifest
+📄 docker-compose.yml     - Docker-Konfiguration
+📄 app/Dockerfile         - Container-Image
+📄 app/server.js          - Express Server
+📄 app/public/index.html  - Benutzeroberfläche
+📄 app/public/app.js      - Verschlüsselte Logik
+📄 app/public/storage.js  - Lokal verschlüsselter Storage
+
+═══════════════════════════════════════════════════════════════
+
+SICHERHEIT:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔐 PIN: 9045 (verschlüsselt)
+🔐 Alle Daten: AES-verschlüsselt lokal im Browser
+🔐 Offline: Funktioniert ohne Internetverbindung
+🔐 Auto-Logout: Nach 15 Minuten automatisch
+
+═══════════════════════════════════════════════════════════════
+
+ZUGRIFF:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Lokal:           http://localhost:5000
+Umbrel Server:   http://YOUR_UMBREL_IP:5000
+Standard Port:   5000
+
+═══════════════════════════════════════════════════════════════
+
+FRAGEN? Siehe: DEPLOYMENT.md
