@@ -1,17 +1,100 @@
-## Umbrel Community App Store Template
+# Lager Monitor für UmbrelOS
 
-This repository is a template to create an Umbrel Community App Store. These additional app stores allow developers to distribute applications without submitting to the [Official Umbrel App Store](https://github.com/getumbrel/umbrel-apps).
+Eine vollständige Lagerverwaltungslösung für UmbrelOS.
 
-## How to use:
+## Features
 
-1. Start by clicking the "Use this template" button located above.
-2. Assign an ID and name to your app store within the `umbrel-app-store.yml` file. This file specifies two important attributes:
-    - `id` - Acts as a unique prefix for every app within your Community App Store. You must start your application's ID with your app store's ID. For instance, in this template, the app store ID is `sparkles`, and there's an app named `hello world`. Consequently, the app's ID should be: `sparkles-hello-world`.
-    - `name` - This is the name of the Community App Store displayed in the umbrelOS UI.
-3. Change the name of the `sparkles-hello-world` folder to match your app's ID. The app ID is for you to decide. For example, if your app store ID is `whistles`, and your app is named My Video Downloader, you could set its app ID to `whistles-my-video-downloader`, and rename the folder accordingly.
-4. Next, enter your app's listing details in the `whistles-my-video-downloader/umbrel-app.yml`. These are displayed in the umbrelOS UI.
-5. Include the necessary Docker services in `whistles-my-video-downloader/docker-compose.yml`.
-6. That's it! Your Community App Store, featuring your unique app, is now set up and ready to go. To use your Community App Store, you can add its GitHub url the umbrelOS user interface as shown in the following demo:
+- **Produktverwaltung**: Produkte mit Namen, SKU, Preis und Bestand verwalten
+- **Wareneingang**: Neue Ware buchen und Bestand aktualisieren
+- **Warenausgang**: Verkäufe und Entnahmen erfassen
+- **Umsatzübersicht**: Verkaufsumsätze und Top-Produkte anzeigen
+- **Persistente Datenbank**: Alle Daten werden in SQLite gespeichert
 
+## Installation auf UmbrelOS
 
-https://user-images.githubusercontent.com/10330103/197889452-e5cd7e96-3233-4a09-b475-94b754adc7a3.mp4
+### Methode 1: Aus dem lokalen Verzeichnis
+
+1. Bauen Sie das Docker-Image:
+```bash
+cd warehouse-monitor/app
+docker build -t warehouse-monitor:latest .
+```
+
+2. Kopieren Sie das gesamte `warehouse-monitor` Verzeichnis in Ihr Umbrel App Store Verzeichnis:
+```bash
+rsync -av warehouse-monitor/ umbrel@umbrel-dev.local:/home/umbrel/umbrel/app-stores/community/warehouse-monitor/
+```
+
+3. Installieren Sie die App über die Umbrel Web-Oberfläche oder CLI:
+```bash
+npm run dev client -- apps.install.mutate -- --appId warehouse-monitor
+```
+
+### Methode 2: Über Custom App Store
+
+1. Erstellen Sie einen Fork dieses Repositories
+2. Fügen Sie den Fork als Custom App Store in Umbrel hinzu
+3. Installieren Sie die App aus Ihrem Custom Store
+
+## Verwendung
+
+### Produkte hinzufügen
+1. Klicken Sie auf "Neues Produkt"
+2. Geben Sie Name, SKU und Preis ein
+3. Speichern
+
+### Wareneingang buchen
+1. Wählen Sie ein Produkt aus
+2. Klicken Sie auf "Buchen"
+3. Wählen Sie "Wareneingang"
+4. Geben Sie die Menge ein
+5. Optional: Fügen Sie eine Notiz hinzu
+
+### Warenausgang buchen
+1. Wählen Sie ein Produkt aus
+2. Klicken Sie auf "Buchen"
+3. Wählen Sie "Warenausgang"
+4. Geben Sie die Menge und optional einen Verkaufspreis ein
+5. Die App berechnet automatisch den Umsatz
+
+### Umsatz überwachen
+1. Wechseln Sie zum Tab "Umsatz"
+2. Sehen Sie Gesamtumsatz, verkaufte Artikel und Anzahl der Verkäufe
+3. Überprüfen Sie die Umsätze nach Produkt
+
+## Technische Details
+
+- **Backend**: Node.js + Express
+- **Datenbank**: SQLite (better-sqlite3)
+- **Frontend**: Vanilla JavaScript, HTML, CSS
+- **Container**: Docker (Node 18 Alpine)
+
+## Datenpersistenz
+
+Alle Daten werden im Volume `${APP_DATA_DIR}/data` gespeichert und bleiben bei App-Neustarts erhalten. Bei Deinstallation werden alle Daten gelöscht.
+
+## Entwicklung
+
+Lokale Entwicklung ohne Docker:
+
+```bash
+cd warehouse-monitor/app
+npm install
+npm start
+```
+
+Die App läuft dann auf http://localhost:3000
+
+## API-Endpunkte
+
+- `GET /api/products` - Alle Produkte abrufen
+- `POST /api/products` - Neues Produkt erstellen
+- `PUT /api/products/:id` - Produkt aktualisieren
+- `DELETE /api/products/:id` - Produkt löschen
+- `GET /api/transactions` - Transaktionen abrufen
+- `POST /api/transactions` - Neue Transaktion buchen
+- `GET /api/revenue` - Umsatzdaten abrufen
+
+## Lizenz
+
+MIT
